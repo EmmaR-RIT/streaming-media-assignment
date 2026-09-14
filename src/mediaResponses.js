@@ -1,8 +1,8 @@
 const fs = require('fs');
 const path = require('path');
 
-const getParty = (req, res) => {
-    const file = path.resolve(__dirname, '../client/part.mp4');
+const streamMedia = (req, res, dirPath, mime) => {
+    const file = path.resolve(__dirname, dirPath);
 
     fs.stat(file, (err, stats) => {
         // Check for errors
@@ -10,7 +10,7 @@ const getParty = (req, res) => {
             if (err.code === 'ENOENT') {
                 res.writeHead(404);
             }
-            return res.end(err);
+            return res.end();
         }
 
         // Parse and calculate requsted byte range
@@ -29,7 +29,7 @@ const getParty = (req, res) => {
             'Content-Range': `bytes ${start}-${end}/${stats.size - 1}`,
             'Accept-Ranges': 'bytes',
             'Content-Length': end - start + 1,
-            'Content-Type': 'video/mp4'
+            'Content-Type': mime
         });
 
         // Open a file stream to send the data\
@@ -38,6 +38,12 @@ const getParty = (req, res) => {
         stream.on('error', err => res.end(err))
         return stream;
     });
-};
+}
 
-module.exports = { getParty };
+const getParty = (req, res) => { streamMedia(req, res, '../client/party.mp4', 'video/mp4'); };
+
+const getBling = (req, res) => { streamMedia(req, res, '../client/bling.mp3', 'audio/mpeg'); };
+
+const getBird = (req, res) => { streamMedia(req, res, '../client/bird.mp4', 'video/mp4'); };
+
+module.exports = { getParty, getBling, getBird };
