@@ -26,7 +26,7 @@ const streamMedia = (req, res, dirPath, mime) => {
 
         // Write the headers for the requested range
         res.writeHead(206, {
-            'Content-Range': `bytes ${start}-${end}/${stats.size - 1}`,
+            'Content-Range': `bytes ${start}-${end}/${stats.size}`,
             'Accept-Ranges': 'bytes',
             'Content-Length': end - start + 1,
             'Content-Type': mime
